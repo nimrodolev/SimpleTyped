@@ -20,6 +20,7 @@ namespace tester
     {
         static void Main(string[] args)
         {
+            var vv = new string[] {"a", "b"}.Select(a => a);
             MainAsync().Wait();
         }
 
@@ -32,8 +33,7 @@ namespace tester
                 //cm.Member(p => p.Job).SetIgnore();
             });
 
-
-            var domain = connection.GetDomain<Person>("person");  // Serializer = new SimpleDB.MessagePack.MessagePackSerializer()
+            var domain = connection.GetDomain<Person>("person");
 
             try
             {
@@ -44,7 +44,7 @@ namespace tester
                 //    {
                 //        Id = i + 1,
                 //        Age = 27 + (i * 2),
-                //        Name = $"Person of grop {i % 4}",
+                //        Name = $"Person of group {i % 4}",
                 //        Title = i % 2 == 0 ? "Dr" : "Mr",
                 //        Job = i % 4 == 0 ? null : new job
                 //        {
@@ -59,12 +59,10 @@ namespace tester
                 // for (int i = 0; i < 20; i++)
                 //    lst.Add(i + 1);
                 // domain.BatchDeleteAsync(lst).Wait();
-
                 var all = await domain.SelectAsync(domain.GetQueryBuilder().Empty(), false);
             }
             catch (Exception)
             {
-
             }
         }
     }

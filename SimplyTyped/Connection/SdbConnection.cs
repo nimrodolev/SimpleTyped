@@ -16,7 +16,7 @@ namespace SimplyTyped
         {
             _client = client;
         }
-        public async Task<IEnumerable<string>> GetDomainsAsync()
+        public async Task<IEnumerable<string>> ListDomainsAsync()
         {
             var result = new List<string>();
             ListDomainsResponse domains = null;
@@ -41,7 +41,8 @@ namespace SimplyTyped
                 AttributeValueCount = resp.AttributeValueCount,
                 AttributeValuesSizeBytes = resp.AttributeValuesSizeBytes,
                 ItemCount = resp.ItemCount,
-                ItemNamesSizeBytes = resp.ItemNamesSizeBytes
+                ItemNamesSizeBytes = resp.ItemNamesSizeBytes,
+                Timestamp = Utils.UnixTimestampUtility.UnixTimestampToDatetime(resp.Timestamp)
             };
         }
         public IDomain<T> GetDomain<T>(string domainName) where T : new()

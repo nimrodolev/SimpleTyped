@@ -94,7 +94,7 @@ namespace SimplyTyped.Query
                 parts.Add($"WHERE {_selector}");
             if (!string.IsNullOrEmpty(_orderByMember))
                 parts.Add($"ORDER BY `{_orderByMember}` {_orderDirection.ToString()}");
-            if (!isCount) //ommit "LIMIT" if this is a count query
+            if (!isCount) //omit "LIMIT" if this is a count query
                 parts.Add($"LIMIT {_limit}");
 
             return string.Join($" {Environment.NewLine}", parts);

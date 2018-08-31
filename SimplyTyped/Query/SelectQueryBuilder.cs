@@ -46,7 +46,7 @@ namespace SimplyTyped.Query
             var valueStrings = values.Select(v => $"'{QueryEncodingUtility.EncodeValue(_serializer.Serialize(v))}'");
             return new SelectQuery<T>($"`{memberName}` IN ({string.Join(",", valueStrings)})");
         }
-        public ISelectQuery<T> Like<TMember>(Expression<Func<T, TMember>> member, string pattern)
+        public ISelectQuery<T> Like(Expression<Func<T, string>> member, string pattern)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
@@ -80,26 +80,26 @@ namespace SimplyTyped.Query
             return new SelectQuery<T>($"`{memberName}` IS NULL");
         }
 
-        public ISelectQuery<T> And(params ISelectQuery<T>[] quries)
+        public ISelectQuery<T> And(params ISelectQuery<T>[] queries)
         {
-            return JoinQueries("AND", quries);
+            return JoinQueries("AND", queries);
         }
-        public ISelectQuery<T> Or(params ISelectQuery<T>[] quries)
+        public ISelectQuery<T> Or(params ISelectQuery<T>[] queries)
         {
-            return JoinQueries("OR", quries);
+            return JoinQueries("OR", queries);
         }
-        public ISelectQuery<T> Intersection(params ISelectQuery<T>[] quries)
+        public ISelectQuery<T> Intersection(params ISelectQuery<T>[] queries)
         {
-            return JoinQueries("INTERSECTION", quries);
+            return JoinQueries("INTERSECTION", queries);
         }
-        public ISelectQuery<T> Not(ISelectQuery<T> qurey)
+        public ISelectQuery<T> Not(ISelectQuery<T> query)
         {
-            return new SelectQuery<T>($"NOT ({qurey.Selector})");
+            return new SelectQuery<T>($"NOT ({query.Selector})");
         }
 
-        private ISelectQuery<T> JoinQueries(string joiner, params ISelectQuery<T>[] quries)
+        private ISelectQuery<T> JoinQueries(string joiner, params ISelectQuery<T>[] queries)
         {
-            return new SelectQuery<T>(string.Join($" {joiner} ", quries.Select(q => q.Selector)));
+            return new SelectQuery<T>(string.Join($" {joiner} ", queries.Select(q => q.Selector)));
         }
 
         private void EnsureMemberQueryable(string memberName)

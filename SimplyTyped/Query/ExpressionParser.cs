@@ -41,8 +41,8 @@ namespace SimplyTyped.Query
         }
         private string ParseExpression(MemberExpression exp)
         {
-            var memeberName = ExtractMemberName(exp);
-            return $"`{memeberName}`";
+            var memberName = ExtractMemberName(exp);
+            return $"`{memberName}`";
         }
         private string ParseExpression(ConstantExpression exp)
         {

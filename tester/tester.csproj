@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleDB.MessagePack\SimpleDB.MessagePack.csproj" />
-    <ProjectReference Include="..\SimpleDB\SimpleDB.csproj" />
+    <ProjectReference Include="..\SimplyTyped.MessagePack\SimplyTyped.MessagePack.csproj" />
+    <ProjectReference Include="..\SimplyTyped\SimplyTyped.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,11 +2,11 @@
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using MessagePack;
-using SimpleDB;
-using SimpleDB.Core;
-using SimpleDB.MessagePack;
-using SimpleDB.Query;
-using SimpleDB.Serialization;
+using SimplyTyped;
+using SimplyTyped.Core;
+using SimplyTyped.MessagePack;
+using SimplyTyped.Query;
+using SimplyTyped.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,15 +33,13 @@ namespace tester
             });
 
 
-            var domain = connection.GetDomain<Person>("person", new DomainConfiguration
-            {
-                Serializer = new SimpleDB.MessagePack.MessagePackSerializer()
-            });
+            var domain = connection.GetDomain<Person>("person");  // Serializer = new SimpleDB.MessagePack.MessagePackSerializer()
+
             try
             {
-                //var lst = new List<Person>();
-                //for (int i = 0; i < 20; i++)
-                //{
+                // var lst = new List<Person>();
+                // for (int i = 0; i < 20; i++)
+                // {
                 //    var p = new Person
                 //    {
                 //        Id = i + 1,
@@ -54,13 +52,13 @@ namespace tester
                 //        }
                 //    };
                 //    lst.Add(p);
-                //}
-                //await domain.BatchPutAsync(lst);
+                // }
+                // await domain.BatchPutAsync(lst);
 
-                //var lst = new List<int>();
-                //for (int i = 0; i < 20; i++)
+                // var lst = new List<int>();
+                // for (int i = 0; i < 20; i++)
                 //    lst.Add(i + 1);
-                //domain.BatchDeleteAsync(lst).Wait();
+                // domain.BatchDeleteAsync(lst).Wait();
 
                 var all = await domain.SelectAsync(domain.GetQueryBuilder().Empty(), false);
             }

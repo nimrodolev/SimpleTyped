@@ -1,10 +1,8 @@
 ﻿using Amazon.Runtime;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
-using MessagePack;
 using SimplyTyped;
 using SimplyTyped.Core;
-using SimplyTyped.MessagePack;
 using SimplyTyped.Query;
 using SimplyTyped.Serialization;
 using System;
@@ -66,21 +64,14 @@ namespace tester
         }
     }
 
-    [MessagePackObject]
     public class Person
     {
-        [Key(0)]
         public int Id { get; set; }
-        [Key(1)]
         public string Name { get; set; }
-        [Key(2)]
         public int Age { get; set; }
-        [Key(3)]
         public string Title { get; set; }
-        [Key(4)]
         public job Job { get; set; }
 
-        [IgnoreMember]
         public string FormalName => $"{Title} {Name}";
 
         public override string ToString()
@@ -89,10 +80,8 @@ namespace tester
         }
     }
 
-    [MessagePackObject]
     public class job
     {
-        [Key(0)]
         public string Name { get; set; }
     }
 

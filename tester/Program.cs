@@ -20,7 +20,6 @@ namespace tester
     {
         static void Main(string[] args)
         {
-            var vv = new string[] {"a", "b"}.Select(a => a);
             MainAsync().Wait();
         }
 

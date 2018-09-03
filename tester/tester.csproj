@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimplyTyped.MessagePack\SimplyTyped.MessagePack.csproj" />
-    <ProjectReference Include="..\SimplyTyped\SimplyTyped.csproj" />
+    <ProjectReference Include="..\src\SimplyTyped.MessagePack\SimplyTyped.MessagePack.csproj" />
+    <ProjectReference Include="..\src\SimplyTyped\SimplyTyped.csproj" />
   </ItemGroup>
 
 </Project>

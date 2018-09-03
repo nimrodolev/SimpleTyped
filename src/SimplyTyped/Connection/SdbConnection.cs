@@ -9,13 +9,18 @@ using System.Threading.Tasks;
 
 namespace SimplyTyped
 {
-    public class SdbConnection : ISdbConnection
+    public class Connection : IConnection
     {
         private IAmazonSimpleDB _client;
-        public SdbConnection(IAmazonSimpleDB client)
+        public Connection(IAmazonSimpleDB client)
         {
             _client = client;
         }
+
+        public Connection()
+        {
+        }
+
         public async Task<IEnumerable<string>> ListDomainsAsync()
         {
             var result = new List<string>();

@@ -10,31 +10,29 @@ using System.Text;
 
 namespace SimplyTyped.Query
 {
-    internal class SelectQueryBuilder<T> : ISelectQueryBuilder<T>
+    public class QueryBuilder<T> : IQueryBuilder<T>
     {
         private ExpressionParser _parser = new ExpressionParser();
         private PrimitiveAttributeSerializer _serializer = new PrimitiveAttributeSerializer();
-        private string _domainName;
         private ClassMap<T> _classMap;
 
-        internal SelectQueryBuilder(string domainName)
+        public QueryBuilder()
         {
-            _domainName = domainName;
             _classMap = ClassMap.Get<T>();
         }
 
-        public ISelectQuery<T> Empty() => new SelectQuery<T>(string.Empty);
+        public IQuery<T> Empty() => new Query<T>(new EmptyCondition());
         //TODO: NOT SAFE - can't make sure member is queryable
-        public ISelectQuery<T> Where(Expression<Func<T, bool>> condition)
+        public IQuery<T> Where(Expression<Func<T, bool>> condition)
         {
             BinaryExpression bin = null;
             if ((bin = condition.Body as BinaryExpression) == null)
                 throw new NotSupportedException($"Where can not be called with an expression of type {condition.Body.GetType().Name}");
 
-            var parsed = _parser.ParseBinaryExpression(bin);
-            return new SelectQuery<T>(parsed);
+            var parsed = _parser.ParseBinaryExpression<T>(bin);
+            return new Query<T>(parsed);
         }
-        public ISelectQuery<T> In<TMember>(Expression<Func<T, TMember>> member, params TMember[] values)
+        public IQuery<T> In<TMember>(Expression<Func<T, TMember>> member, params TMember[] values)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
@@ -42,11 +40,12 @@ namespace SimplyTyped.Query
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
 
-            var valueStrings = values.Select(v => $"'{QueryEncodingUtility.EncodeValue(_serializer.Serialize(v))}'");
-            return new SelectQuery<T>($"`{memberName}` IN ({string.Join(",", valueStrings)})");
+            var valueStrings = values.Select(v => _serializer.Serialize(v)).ToArray();
+            return new Query<T>(new InCondition(attrName, valueStrings));
         }
-        public ISelectQuery<T> Like(Expression<Func<T, string>> member, string pattern)
+        public IQuery<T> Like(Expression<Func<T, string>> member, string pattern)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
@@ -54,10 +53,11 @@ namespace SimplyTyped.Query
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
 
-            return new SelectQuery<T>($"`{memberName}` LIKE '{QueryEncodingUtility.EncodeLikePattern(pattern)}'");
+            return new Query<T>(new LikeCondition(attrName, pattern));
         }
-        public ISelectQuery<T> Between<TMember>(Expression<Func<T, TMember>> member, TMember left, TMember right)
+        public IQuery<T> Between<TMember>(Expression<Func<T, TMember>> member, TMember left, TMember right)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
@@ -65,10 +65,11 @@ namespace SimplyTyped.Query
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
 
-            return new SelectQuery<T>($"`{memberName}` BETWEEN '{QueryEncodingUtility.EncodeValue(_serializer.Serialize(left))}' AND '{QueryEncodingUtility.EncodeValue(_serializer.Serialize(right))}'");
+            return new Query<T>(new BetweenCondition(attrName, _serializer.Serialize(left), _serializer.Serialize(right)));
         }
-        public ISelectQuery<T> IsNull<TMember>(Expression<Func<T, TMember>> member)
+        public IQuery<T> IsNull<TMember>(Expression<Func<T, TMember>> member)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
@@ -76,30 +77,30 @@ namespace SimplyTyped.Query
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
 
-            return new SelectQuery<T>($"`{memberName}` IS NULL");
+            return new Query<T>(new IsNullCondition(attrName));
         }
 
-        public ISelectQuery<T> And(params ISelectQuery<T>[] queries)
+        public IQuery<T> And(params IQuery<T>[] queries)
         {
             return JoinQueries("AND", queries);
         }
-        public ISelectQuery<T> Or(params ISelectQuery<T>[] queries)
+        public IQuery<T> Or(params IQuery<T>[] queries)
         {
             return JoinQueries("OR", queries);
         }
-        public ISelectQuery<T> Intersection(params ISelectQuery<T>[] queries)
+        public IQuery<T> Intersection(params IQuery<T>[] queries)
         {
             return JoinQueries("INTERSECTION", queries);
         }
-        public ISelectQuery<T> Not(ISelectQuery<T> query)
+        public IQuery<T> Not(IQuery<T> query)
         {
-            return new SelectQuery<T>($"NOT ({query.Selector})");
+            return new Query<T>(new NotCondition(query.Condition));
         }
-
-        private ISelectQuery<T> JoinQueries(string joiner, params ISelectQuery<T>[] queries)
+        private IQuery<T> JoinQueries(string joiner, params IQuery<T>[] queries)
         {
-            return new SelectQuery<T>(string.Join($" {joiner} ", queries.Select(q => q.Selector)));
+            return new Query<T>(new JoiningCondition(joiner, queries.Select(q => q.Condition).ToArray()));
         }
 
         private void EnsureMemberQueryable(string memberName)
@@ -107,6 +108,12 @@ namespace SimplyTyped.Query
             var desc = _classMap.GetMember(memberName);
             if (!desc.IsQueryable)
                 throw new NotSupportedException($"Member {memberName} can not be queried over.");
+        }
+
+        private string GetMemberAttributeName(string memberName)
+        {
+            var desc = _classMap.GetMember(memberName);
+            return desc.AttributeName;
         }
     }
 }

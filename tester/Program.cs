@@ -24,13 +24,15 @@ namespace tester
         static async Task MainAsync()
         {
             var sdb = new AmazonSimpleDBClient("AKIAJSRJ44GD3Z3PQSKA", "cR5LxtQMuDF3cUHZJPO1f6cD1xKQuiY72md+jMoj", Amazon.RegionEndpoint.EUWest1);
-            ISdbConnection connection = new SdbConnection(sdb);
+            IConnection connection = new Connection(sdb);
             ClassMap.RegisterClassMap<Person>(cm =>
             {
-                //cm.Member(p => p.Job).SetIgnore();
+                cm.Member(p => p.Title).SetNameRepresentation("_t");
             });
 
             var domain = connection.GetDomain<Person>("person");
+            var builder = new QueryBuilder<Person>();
+            System.Console.WriteLine(builder.Where(p => p.Title == null).Condition.Condition);
 
             try
             {
@@ -56,7 +58,7 @@ namespace tester
                 // for (int i = 0; i < 20; i++)
                 //    lst.Add(i + 1);
                 // domain.BatchDeleteAsync(lst).Wait();
-                var all = await domain.SelectAsync(domain.GetQueryBuilder().Empty(), false);
+                var all = await domain.SelectAsync(new QueryBuilder<Person>().Empty(), false);
             }
             catch (Exception)
             {

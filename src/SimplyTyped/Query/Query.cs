@@ -8,42 +8,40 @@ using System.Text;
 
 namespace SimplyTyped.Query
 {
-    internal class SelectQuery<T> : ISelectQuery<T>
+    internal class Query<T> : IQuery<T>
     {
         private static readonly int DEFAULT_LIMIT = 2500; //actually page size
 
         private ExpressionParser _parser = new ExpressionParser();
         private int _limit = DEFAULT_LIMIT;
 
-        private string _selector;
+        private ICondition _condition;
         protected HashSet<string> _memberNames = ClassMap.Get<T>().GetSerializationDescriptors().Select(d => d.MemberName).ToHashSet();
         protected string[] _includeMembers;
         protected string[] _excludeMembers;
         protected Direction _orderDirection = Direction.ASC;
         protected string _orderByMember;
-
-        protected SelectQuery() { }
-        internal SelectQuery(string selector)
+        internal Query(ICondition condition)
         {
-            _selector = selector;
+            _condition = condition;
         }
 
-        public ISelectQuery<T> Limit(int limit)
+        public IQuery<T> Limit(int limit)
         {
             _limit = limit;
             return this;
         }
-        public ISelectQuery<T> Include(params Expression<Func<T, object>>[] members)
+        public IQuery<T> Include(params Expression<Func<T, object>>[] members)
         {
             var memberNames = ExtractMemberNames(members);
             return Include(memberNames);
         }
-        public ISelectQuery<T> Exclude(params Expression<Func<T, object>>[] members)
+        public IQuery<T> Exclude(params Expression<Func<T, object>>[] members)
         {
             var memberNames = ExtractMemberNames(members);
             return Exclude(memberNames);
         }
-        public ISelectQuery<T> OrderBy<TMember>(Expression<Func<T, TMember>> member, Direction direction)
+        public IQuery<T> OrderBy<TMember>(Expression<Func<T, TMember>> member, Direction direction)
         {
             if (!string.IsNullOrEmpty(_orderByMember))
                 throw new Exception($"Only one call to {nameof(OrderBy)} is allowed. Query was already set to oder by {_orderByMember}");
@@ -55,7 +53,7 @@ namespace SimplyTyped.Query
             _orderDirection = direction;
             return this;
         }
-        public ISelectQuery<T> Include(params string[] members)
+        public IQuery<T> Include(params string[] members)
         {
             if (_excludeMembers != null)
                 throw new Exception($"{nameof(Include)} and {nameof(Exclude)} can not be used in the same query, {nameof(Exclude)} was already used.");
@@ -67,7 +65,7 @@ namespace SimplyTyped.Query
             _includeMembers = members;
             return this;
         }
-        public ISelectQuery<T> Exclude(params string[] members)
+        public IQuery<T> Exclude(params string[] members)
         {
             if (_includeMembers != null)
                 throw new Exception($"{nameof(Include)} and {nameof(Exclude)} can not be used in the same query, {nameof(Include)} was already used.");
@@ -79,19 +77,19 @@ namespace SimplyTyped.Query
             _excludeMembers = members;
             return this;
         }
-        public string Selector => _selector;
+        public ICondition Condition => _condition;
 
         public override string ToString()
         {
-            return Assemble("<DOMAIN>", false);
+            return BuildQuery("<DOMAIN>", false);
         }
-        public string Assemble(string domainName, bool isCount)
+        public string BuildQuery(string domainName, bool isCount)
         {
             var parts = new List<string>();
             parts.Add(GetSelectClause(isCount));
             parts.Add($"FROM `{domainName}`");
-            if (!string.IsNullOrEmpty(_selector))
-                parts.Add($"WHERE {_selector}");
+            if (!string.IsNullOrEmpty(_condition.Condition))
+                parts.Add($"WHERE {_condition.Condition}");
             if (!string.IsNullOrEmpty(_orderByMember))
                 parts.Add($"ORDER BY `{_orderByMember}` {_orderDirection.ToString()}");
             if (!isCount) //omit "LIMIT" if this is a count query

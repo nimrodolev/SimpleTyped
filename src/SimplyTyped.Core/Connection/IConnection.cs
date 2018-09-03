@@ -7,7 +7,7 @@ namespace SimplyTyped.Core
     /// <summary>
     /// Allows instantiating IDomain instances, as well performing higher level operation such as listing all domains.
     /// </summary>
-    public interface ISdbConnection
+    public interface IConnection
     {
         /// <summary>
         /// Instantiates a typed IDomain instance that can be used to perform operations against a given domain

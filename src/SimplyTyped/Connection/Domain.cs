@@ -154,27 +154,21 @@ namespace SimplyTyped
                 await InternalBatchDeleteAsync(batch);
         }
 
-        public async Task<IEnumerable<T>> SelectAsync(ISelectQuery<T> query, bool consistantRead)
+        public async Task<IEnumerable<T>> SelectAsync(IQuery<T> query, bool consistantRead)
         {
-            var queryStr = query.Assemble(_domainName, false);
+            var queryStr = query.BuildQuery(_domainName, false);
             var items = await RawSelectAsync(queryStr, consistantRead);
             var results = items.Select(i => Deserialize(i.Attributes)).ToArray();
             return results;
         }
 
-        public async Task<long> SelectCountAsync(ISelectQuery<T> query, bool consistantRead)
+        public async Task<long> SelectCountAsync(IQuery<T> query, bool consistantRead)
         {
-            var queryStr = query.Assemble(_domainName, true);
+            var queryStr = query.BuildQuery(_domainName, true);
             var items = await RawSelectAsync(queryStr, consistantRead);
             var result = long.Parse(items.First().Attributes.First().Value);
             return result;
         }
-
-        public ISelectQueryBuilder<T> GetQueryBuilder()
-        {
-            return new SelectQueryBuilder<T>(_domainName);
-        }
-
 
         private async Task<IEnumerable<Item>> RawSelectAsync(string query, bool consistantRead)
         {

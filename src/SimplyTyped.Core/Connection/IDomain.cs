@@ -48,12 +48,6 @@ namespace SimplyTyped.Core
         Task<T> GetByIdAsync<TMember>(TMember id);
         
         /// <summary>
-        /// Instantiates and returns a SelectQueryBuilder&lt;T&gt; that can be used to comprise a Select query to fetch data using SelectAsync and SelectCountAsync
-        /// </summary>
-        /// <returns>An instance of SelectQueryBuilder&lt;T&gt;</returns>
-        ISelectQueryBuilder<T> GetQueryBuilder();
-        
-        /// <summary>
         /// Adds an item in the domain. Throws an exception if the item already exists.
         /// </summary>
         /// <param name="item">The item to be added</param>
@@ -75,7 +69,7 @@ namespace SimplyTyped.Core
         /// <param name="consistantRead">Sets the underlaying consistency option for the issued Select request, 
         /// as described in the AWS SimpleDB documentation found at https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/ConsistencySummary.html</param>
         /// <returns>The Select request's results, deserialized into instances of T</returns>
-        Task<IEnumerable<T>> SelectAsync(ISelectQuery<T> query, bool consistantRead);
+        Task<IEnumerable<T>> SelectAsync(IQuery<T> query, bool consistantRead);
         
         /// <summary>
         /// Issues a given Select request as a count query.
@@ -84,6 +78,6 @@ namespace SimplyTyped.Core
         /// <param name="consistantRead">Sets the underlaying consistency option for the issued Select request, 
         /// as described in the AWS SimpleDB documentation found at https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/ConsistencySummary.html</param>
         /// <returns>A long value representing the amount of results for the given Select query</returns>
-        Task<long> SelectCountAsync(ISelectQuery<T> query, bool consistantRead);
+        Task<long> SelectCountAsync(IQuery<T> query, bool consistantRead);
     }
 }

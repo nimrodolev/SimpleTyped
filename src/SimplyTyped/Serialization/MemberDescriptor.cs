@@ -24,7 +24,7 @@ namespace SimplyTyped.Serialization
             IsIgnored = true;
             return this;
         }
-        public MemberDescriptor SetNonQueraible()
+        public MemberDescriptor SetNonQueryable()
         {
             IsQueryable = false;
             return this;

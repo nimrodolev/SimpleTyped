@@ -13,6 +13,7 @@ using System.Threading;
 using SimplyTyped.Core;
 using SimplyTyped.Core.Query;
 using SimplyTyped.Query;
+using SimplyTyped.Utils;
 
 namespace SimplyTyped
 {
@@ -60,7 +61,7 @@ namespace SimplyTyped
                 Expected = throwIfExists ? new UpdateCondition { Name = idDesc.AttributeName, Exists = false } : null
             });
 
-            if (!IsSucessStatusCode(resp.HttpStatusCode))
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                 throw new Exception("Something went wrong");
         }
 
@@ -78,7 +79,7 @@ namespace SimplyTyped
                 ItemName = _primitiveSerializer.Serialize(id)
             });
 
-            if (!IsSucessStatusCode(resp.HttpStatusCode))
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                 throw new Exception("Something went wrong");
             if (resp.Attributes.Count == 0)
                 throw new KeyNotFoundException($"No item with id {id} was found");
@@ -99,7 +100,7 @@ namespace SimplyTyped
                 ItemName = _primitiveSerializer.Serialize(id)
             });
 
-            if (!IsSucessStatusCode(resp.HttpStatusCode))
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                 throw new Exception("Something went wrong");
         }
 
@@ -190,7 +191,7 @@ namespace SimplyTyped
                     NextToken = resp?.NextToken
                 });
 
-                if (!IsSucessStatusCode(resp.HttpStatusCode))
+                if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                     throw new Exception("Something went wrong");
 
                 results.AddRange(resp.Items);
@@ -212,7 +213,7 @@ namespace SimplyTyped
                 Items = itemIds
             });
 
-            if (!IsSucessStatusCode(resp.HttpStatusCode))
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                 throw new Exception("Something went wrong");
         }
         private async Task InternalBatchPutAsync(List<ReplaceableItem> items)
@@ -228,7 +229,7 @@ namespace SimplyTyped
                 Items = items.ToList()
             });
 
-            if (!IsSucessStatusCode(resp.HttpStatusCode))
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
                 throw new Exception("Something went wrong");
         }
         private T Deserialize(IEnumerable<Amazon.SimpleDB.Model.Attribute> attrs)
@@ -278,11 +279,7 @@ namespace SimplyTyped
                 return _primitiveSerializer;
             return _serializer;
         }
-        private bool IsSucessStatusCode(HttpStatusCode code)
-        {
-            var n = (int)code;
-            return n >= 200 && n < 300;
-        }
+
         private async Task EnsureDomainCreated()
         {
             if (_domainExists)

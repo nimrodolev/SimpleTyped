@@ -69,7 +69,7 @@ namespace SimplyTyped.Core
         /// <param name="consistantRead">Sets the underlaying consistency option for the issued Select request, 
         /// as described in the AWS SimpleDB documentation found at https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/ConsistencySummary.html</param>
         /// <returns>The Select request's results, deserialized into instances of T</returns>
-        Task<IEnumerable<T>> SelectAsync(IQuery<T> query, bool consistantRead);
+        Task<IAsyncQueryEnumerator<T>> SelectAsync(IQuery<T> query, bool consistantRead);
         
         /// <summary>
         /// Issues a given Select request as a count query.

@@ -154,46 +154,42 @@ namespace SimplyTyped
                 await InternalBatchDeleteAsync(batch);
         }
 
-        public async Task<IEnumerable<T>> SelectAsync(IQuery<T> query, bool consistantRead)
+        public Task<IAsyncQueryEnumerator<T>> SelectAsync(IQuery<T> query, bool consistantRead)
         {
             var queryStr = query.BuildQuery(_domainName, false);
-            var items = await RawSelectAsync(queryStr, consistantRead);
-            var results = items.Select(i => Deserialize(i.Attributes)).ToArray();
-            return results;
+            return Task.FromResult<IAsyncQueryEnumerator<T>>(new AsyncQueryEnumerator<T>(this, new SelectRequest
+            {
+                ConsistentRead = consistantRead,
+                SelectExpression = queryStr
+            }));
         }
 
         public async Task<long> SelectCountAsync(IQuery<T> query, bool consistantRead)
         {
             var queryStr = query.BuildQuery(_domainName, true);
-            var items = await RawSelectAsync(queryStr, consistantRead);
-            var result = long.Parse(items.First().Attributes.First().Value);
+            var resp = await _client.SelectAsync(new SelectRequest
+            {
+                ConsistentRead = consistantRead,
+                SelectExpression = queryStr
+            });
+            var result = long.Parse(resp.Items.First().Attributes.First().Value);
             return result;
         }
 
-        private async Task<IEnumerable<Item>> RawSelectAsync(string query, bool consistantRead)
+        internal async Task<AsyncQueryEnumerator<T>.SelectPage<T>> SelectBatchAsync(SelectRequest req)
         {
-            if (string.IsNullOrEmpty(query))
-                throw new ArgumentNullException(nameof(query));
-            var results = new List<Item>();
-            SelectResponse resp = null;
-            do
+            var resp = await _client.SelectAsync(req);
+
+            if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
+                throw new Exception("Something went wrong");
+
+            return new AsyncQueryEnumerator<T>.SelectPage<T>
             {
-                resp = await _client.SelectAsync(new SelectRequest
-                {
-                    ConsistentRead = consistantRead,
-                    SelectExpression = query,
-                    NextToken = resp?.NextToken
-                });
-
-                if (!HttpUtility.IsSuccessStatusCode(resp.HttpStatusCode))
-                    throw new Exception("Something went wrong");
-
-                results.AddRange(resp.Items);
-
-            } while (!string.IsNullOrEmpty(resp.NextToken));
-
-            return results;
+                Data = resp.Items.Select(i => Deserialize(i.Attributes)).ToArray(),
+                NextToken = resp.NextToken
+            };
         }
+
         private async Task InternalBatchDeleteAsync(List<DeletableItem> itemIds)
         {
             if (itemIds.Count > MAX_BATCH_SIZE)
@@ -241,7 +237,7 @@ namespace SimplyTyped
                         throw new Exception($"Attribute with key {key} can not be mapped to any of the members on class {typeof(T).Name}.");
                     continue;
                 }
-                
+
                 var useSer = SelectSerializer(memberDescriptor.MemberType);
                 var obj = useSer.Deserialize(val, memberDescriptor.MemberType);
                 _accessor[empty, memberDescriptor.MemberName] = obj;
@@ -321,7 +317,7 @@ namespace SimplyTyped
             if (idVal == null)
                 throw new Exception("Id member's value can not be null");
 
-            return  _primitiveSerializer.Serialize(idVal);
+            return _primitiveSerializer.Serialize(idVal);
         }
     }
 }

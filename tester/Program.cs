@@ -32,7 +32,6 @@ namespace tester
 
             var domain = connection.GetDomain<Person>("person");
             var builder = new QueryBuilder<Person>();
-            System.Console.WriteLine(builder.Where(p => p.Title == null).Condition.Condition);
 
             try
             {
@@ -59,6 +58,11 @@ namespace tester
                 //    lst.Add(i + 1);
                 // domain.BatchDeleteAsync(lst).Wait();
                 var all = await domain.SelectAsync(new QueryBuilder<Person>().Empty(), false);
+                while (await all.MoveNextAsync())
+                {
+                    var cur = await all.Current;
+                    System.Console.WriteLine(cur.FormalName);
+                }
             }
             catch (Exception)
             {

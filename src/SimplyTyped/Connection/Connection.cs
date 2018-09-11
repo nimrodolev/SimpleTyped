@@ -5,6 +5,7 @@ using SimplyTyped.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimplyTyped
@@ -17,17 +18,17 @@ namespace SimplyTyped
             _client = client;
         }
 
-        public Connection()
-        {
-        }
-
         public async Task<IEnumerable<string>> ListDomainsAsync()
         {
             var result = new List<string>();
             ListDomainsResponse domains = null;
             do
             {
-                domains = await _client.ListDomainsAsync(new ListDomainsRequest { MaxNumberOfDomains = 100, NextToken = domains?.NextToken });
+                domains = await _client.ListDomainsAsync(new ListDomainsRequest 
+                {
+                     MaxNumberOfDomains = 100, 
+                     NextToken = domains?.NextToken 
+                }, CancellationToken.None);
                 result.AddRange(domains.DomainNames);
 
             } while (!string.IsNullOrEmpty(domains.NextToken));
@@ -38,7 +39,7 @@ namespace SimplyTyped
             var resp = await _client.DomainMetadataAsync(new DomainMetadataRequest
             {
                 DomainName = domainName
-            });
+            }, CancellationToken.None);
             return new DomainMetadata
             {
                 AttributeNameCount = resp.AttributeNameCount,

@@ -1,0 +1,11 @@
+build-core:
+  script: 
+    - dotnet build ./src/SimplyTyped.Core/SimplyTyped.Core.csproj
+    - dotnet build ./src/SimplyTyped/SimplyTyped.csproj
+  image: microsoft/dotnet:sdk
+  stage: build
+
+test:
+  script: dotnet test ./test/*
+  image: microsoft/dotnet:sdk
+  stage: test

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tester", "tester\tester.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplyTyped.Core", "src\SimplyTyped.Core\SimplyTyped.Core.csproj", "{37D18E1F-AA00-493F-8BAE-0D8DE1A33916}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplyTyped.Tests", "test\SimplyTyped.Tests\SimplyTyped.Tests.csproj", "{37D18E1F-AA00-422F-8BAE-0D8DE1A33916}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{A77A783E-A156-44B4-9C5A-8EDF8DC07D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A77A783E-A156-44B4-9C5A-8EDF8DC07D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A77A783E-A156-44B4-9C5A-8EDF8DC07D0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D18E1F-AA00-422F-8BAE-0D8DE1A33916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D18E1F-AA00-422F-8BAE-0D8DE1A33916}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D18E1F-AA00-422F-8BAE-0D8DE1A33916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D18E1F-AA00-422F-8BAE-0D8DE1A33916}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

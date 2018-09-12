@@ -16,7 +16,6 @@ deploy:
   script:  
     - dotnet pack ./src/SimplyTyped.Core/SimplyTyped.Core.csproj -o ./ -c Release /p:PackageVersion=$CI_COMMIT_TAG
     - dotnet pack ./src/SimplyTyped/SimplyTyped.csproj -o ./ -c Release /p:PackageVersion=$CI_COMMIT_TAG
-    - PACKAGES=$(ls ./src/**/*.nupkg)
-    - dotnet nuget push $PACKAGES -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY -v $CI_COMMIT_TAG
+    - dotnet nuget push ./src/**/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY
   only:
     - tags

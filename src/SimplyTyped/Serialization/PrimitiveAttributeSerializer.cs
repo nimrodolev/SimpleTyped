@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimplyTyped
+namespace SimplyTyped.Serialization
 {
     internal class PrimitiveAttributeSerializer : ISerializer
     {

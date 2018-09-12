@@ -83,6 +83,8 @@ namespace SimplyTyped.Tests
             Assert.Equal(now, metadata.Timestamp);
         }
 
+
+
         #region private setups
         private Mock<IAmazonSimpleDB> GetSimpleDbClientMock()
         {
@@ -99,5 +101,11 @@ namespace SimplyTyped.Tests
             };
         }
         #endregion
+
+    }
+    class TestEntry
+    {
+        public string Id { get; set; }
+        public int MyProperty { get; set; }
     }
 }

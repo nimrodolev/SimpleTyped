@@ -58,57 +58,88 @@ namespace SimplyTyped.Tests
             Assert.Equal(maxValue.ToString().Length, serialized.Length);
         }
 
-
-        [Fact]
-        public void PrimitiveAttributeSerializer_SerializeByte_PaddingLengthCorrect()
+        private void PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(object value, Type type)
         {
             // arrange
             var serializer = new PrimitiveAttributeSerializer();
-
-            byte value = 1;
             // act
-            var serialized = serializer.Serialize(value);
+            var str = serializer.Serialize(value);
+            var roundtripped = serializer.Deserialize(str, type);
+        
             // assert
-            Assert.Equal(byte.MaxValue.ToString().Length, serialized.Length);
-        }
-
-        [Fact]
-        public void PrimitiveAttributeSerializer_SerializeShort_PaddingLengthCorrect()
-        {
-            // arrange
-
-            var serializer = new PrimitiveAttributeSerializer();
-            short value = 1;
-            // act
-            var serialized = serializer.Serialize(value);
-            // assert
-            Assert.Equal(short.MaxValue.ToString().Length, serialized.Length);
-        }
-
-        [Fact]
-        public void PrimitiveAttributeSerializer_SerializeInt_PaddingLengthCorrect()
-        {
-            // arrange
-            var serializer = new PrimitiveAttributeSerializer();
-            int value = 1;
-            // act
-            var serialized = serializer.Serialize(value);
-            // assert
-            Assert.Equal(int.MaxValue.ToString().Length, serialized.Length);
+            Assert.Equal(value, roundtripped);
         }
 
         [Theory]
-        [InlineRange(1, 5)]
-        public void PrimitiveAttributeSerializer_SerializeLong_PaddingLengthCorrect(long value)
+        [InlineData(Byte.MinValue)]
+        [InlineData(Byte.MaxValue)]
+        [InlineData((Byte)0)]
+        public void PrimitiveAttributeSerializer_SerializeByte_RoundtripSuccessfull(Byte value)
         {
-            // arrange
-            var serializer = new PrimitiveAttributeSerializer();
-            //long value = 1;
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(Byte));
+        }
 
-            // act
-            var serialized = serializer.Serialize(value);
-            // assert
-            Assert.Equal(long.MaxValue.ToString().Length, serialized.Length);
+        [Theory]
+        [InlineData(SByte.MinValue)]
+        [InlineData(SByte.MaxValue)]
+        [InlineData((SByte)0)]
+        public void PrimitiveAttributeSerializer_SerializeSignedByte_RoundtripSuccessfull(SByte value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(SByte));
+        }
+
+        [Theory]
+        [InlineData(Int16.MinValue)]
+        [InlineData(Int16.MaxValue)]
+        [InlineData((Int16)0)]
+        public void PrimitiveAttributeSerializer_SerializeSignedInt16_RoundtripSuccessfull(Int16 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(Int16));
+        }
+
+        [Theory]
+        [InlineData(UInt16.MinValue)]
+        [InlineData(UInt16.MaxValue)]
+        [InlineData((UInt16)0)]
+        public void PrimitiveAttributeSerializer_SerializeUnsignedInt16_RoundtripSuccessfull(UInt16 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(UInt16));
+        }
+
+        [Theory]
+        [InlineData(Int32.MinValue)]
+        [InlineData(Int32.MaxValue)]
+        [InlineData((Int32)0)]
+        public void PrimitiveAttributeSerializer_SerializeSignedInt32_RoundtripSuccessfull(Int32 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(Int32));
+        }
+
+        [Theory]
+        [InlineData(UInt32.MinValue)]
+        [InlineData(UInt32.MaxValue)]
+        [InlineData((UInt32)0)]
+        public void PrimitiveAttributeSerializer_SerializeUnsignedInt32_RoundtripSuccessfull(UInt32 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(UInt32));
+        }
+
+        [Theory]
+        [InlineData(Int64.MinValue)]
+        [InlineData(Int64.MaxValue)]
+        [InlineData((Int64)0)]
+        public void PrimitiveAttributeSerializer_SerializeSignedInt64_RoundtripSuccessfull(Int64 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(Int64));
+        }
+
+        [Theory]
+        [InlineData(UInt64.MinValue)]
+        [InlineData(UInt64.MaxValue)]
+        [InlineData((UInt64)0)]
+        public void PrimitiveAttributeSerializer_SerializeUnsignedInt64_RoundtripSuccessfull(UInt64 value)
+        {
+            PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(UInt64));
         }
     }
 }

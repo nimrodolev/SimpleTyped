@@ -5,7 +5,7 @@ using SimplyTyped.Utils;
 
 namespace SimplyTyped.Query
 {
-    public class InCondition : ICondition
+    internal class InCondition : ICondition
     {
         private const string IN_TEMPLATE = "`{0}` IN ({1})";
         private string _memberName;

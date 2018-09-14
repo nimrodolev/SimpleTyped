@@ -4,7 +4,7 @@ using SimplyTyped.Core.Query;
 
 namespace SimplyTyped.Query
 {
-    public class JoiningCondition : ICondition
+    internal class JoiningCondition : ICondition
     {
         private List<ICondition> _children;
         private string _joiner;

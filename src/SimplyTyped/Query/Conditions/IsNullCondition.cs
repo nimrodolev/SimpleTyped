@@ -4,7 +4,7 @@ using SimplyTyped.Core.Query;
 
 namespace SimplyTyped.Query
 {
-    public class IsNullCondition : ICondition
+    internal class IsNullCondition : ICondition
     {
         private const string IS_NULL_TEMPLATE = "`{0}` IS NULL";
         private string _memberName;

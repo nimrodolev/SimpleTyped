@@ -5,7 +5,7 @@ using SimplyTyped.Utils;
 
 namespace SimplyTyped.Query
 {
-    public class LikeCondition : ICondition
+    internal class LikeCondition : ICondition
     {
         private const string LIKE_TEMPLATE = "`{0}` LIKE '{1}'";
         private string _memberName;

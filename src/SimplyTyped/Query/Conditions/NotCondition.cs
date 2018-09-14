@@ -4,7 +4,7 @@ using SimplyTyped.Core.Query;
 
 namespace SimplyTyped.Query
 {
-    public class NotCondition : ICondition
+    internal class NotCondition : ICondition
     {
         private const string NOT_TEMPLATE = "NOT ({0})";
         private ICondition _condition;

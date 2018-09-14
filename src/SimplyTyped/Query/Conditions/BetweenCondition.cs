@@ -5,7 +5,7 @@ using SimplyTyped.Utils;
 
 namespace SimplyTyped.Query
 {
-    public class BetweenCondition : ICondition
+    internal class BetweenCondition : ICondition
     {
         private const string BETWEEN_TEMPLATE = "`{0}` BETWEEN '{1}' AND '{2}'";
         private string _memberName;

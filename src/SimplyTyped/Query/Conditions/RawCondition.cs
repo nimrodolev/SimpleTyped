@@ -2,7 +2,7 @@
 
 namespace SimplyTyped.Query
 {
-    public class RawCondition : ICondition
+    internal class RawCondition : ICondition
     {
         private string _condition;
         public RawCondition(string condition)

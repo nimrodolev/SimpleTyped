@@ -2,7 +2,7 @@
 
 namespace SimplyTyped.Query
 {
-    public class EmptyCondition : ICondition
+    internal class EmptyCondition : ICondition
     {
         public string Condition => string.Empty;
     }

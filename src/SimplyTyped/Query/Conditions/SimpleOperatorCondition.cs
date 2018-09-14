@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using SimplyTyped.Core.Query;
 using SimplyTyped.Utils;
-
 namespace SimplyTyped.Query
 {
     internal class SimpleOperatorCondition : ICondition

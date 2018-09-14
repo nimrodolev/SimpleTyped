@@ -9,6 +9,46 @@ namespace SimplyTyped.Core.Query
     public interface IQueryBuilder<T>
     {
         /// <summary>
+        /// Creates a new IsEqualTo query, e.g. "x = y"
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The value to use for the query</param>
+        /// <returns>A new query</returns>
+        IQuery<T> IsEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value);
+       
+        /// <summary>
+        /// Creates a new GreaterThan query, e.g. "x > y"
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The value to use for the query</param>
+        /// <returns>A new query</returns>
+        IQuery<T> GreaterThan<TMember>(Expression<Func<T, TMember>> member, TMember value);
+
+        /// <summary>
+        /// Creates a new GreaterThanOrEqualTo query, e.g. "x >= y"
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The value to use for the query</param>
+        /// <returns>A new query</returns>
+        IQuery<T> GreaterThanOrEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value);
+
+        /// <summary>
+        /// Creates a new LessThan query, e.g. "x < y"
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The value to use for the query</param>
+        /// <returns>A new query</returns>
+        IQuery<T> LessThan<TMember>(Expression<Func<T, TMember>> member, TMember value);
+
+        /// <summary>
+        /// Creates a new LessThanOrEqualTo query, e.g. "x <= y"
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The value to use for the query</param>
+        /// <returns>A new query</returns>
+        IQuery<T> LessThanOrEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value);
+
+        /// <summary>
         /// Constructs a new query buy joining several queries into a singal one with an 'AND' operator.
         /// </summary>
         /// <param name="queries">The queries to join</param>

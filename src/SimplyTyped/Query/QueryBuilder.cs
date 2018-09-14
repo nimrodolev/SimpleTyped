@@ -98,18 +98,51 @@ namespace SimplyTyped.Query
         {
             return new Query<T>(new NotCondition(query.Condition));
         }
+        public IQuery<T> IsEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value)
+        {
+            return GetSimpleOperatorCondition(member, value, SimpleOperator.IsEqualTo);
+        }
+        public IQuery<T> GreaterThan<TMember>(Expression<Func<T, TMember>> member, TMember value)
+        {
+            return GetSimpleOperatorCondition(member, value, SimpleOperator.GreaterThan);
+
+        }
+        public IQuery<T> GreaterThanOrEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value)
+        {
+            return GetSimpleOperatorCondition(member, value, SimpleOperator.GreaterThanOrEqualTo);
+        }
+        public IQuery<T> LessThan<TMember>(Expression<Func<T, TMember>> member, TMember value)
+        {
+            return GetSimpleOperatorCondition(member, value, SimpleOperator.LessThan);
+        }
+        public IQuery<T> LessThanOrEqualTo<TMember>(Expression<Func<T, TMember>> member, TMember value)
+        {
+            return GetSimpleOperatorCondition(member, value, SimpleOperator.LessThanOrEqualTo);
+        }
+
+        private IQuery<T> GetSimpleOperatorCondition<TMember>(Expression<Func<T, TMember>> member, TMember value, SimpleOperator op)
+        {
+            MemberExpression memExp = null;
+            if ((memExp = member.Body as MemberExpression) == null)
+                throw new NotSupportedException($"Can not be called with an expression of type {member.Body.GetType().Name}");
+
+            var memberName = _parser.ExtractMemberName(memExp);
+            EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
+
+            var valueString = _serializer.Serialize(value);
+            return new Query<T>(new SimpleOperatorCondition(op, attrName, valueString));
+        }
         private IQuery<T> JoinQueries(string joiner, params IQuery<T>[] queries)
         {
             return new Query<T>(new JoiningCondition(joiner, queries.Select(q => q.Condition).ToArray()));
         }
-
         private void EnsureMemberQueryable(string memberName)
         {
             var desc = _classMap.GetMember(memberName);
             if (!desc.IsQueryable)
                 throw new NotSupportedException($"Member {memberName} can not be queried over.");
         }
-
         private string GetMemberAttributeName(string memberName)
         {
             var desc = _classMap.GetMember(memberName);

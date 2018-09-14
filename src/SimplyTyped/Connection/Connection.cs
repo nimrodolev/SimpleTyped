@@ -58,6 +58,7 @@ namespace SimplyTyped
 
         public IDomain<T> GetDomain<T>(string domainName, DomainConfiguration configuration) where T : new()
         {
+            configuration.Serializer = configuration.Serializer ?? new DefaultAttributeSerializer();
             return new Domain<T>(_client, domainName, configuration);
         }
     }

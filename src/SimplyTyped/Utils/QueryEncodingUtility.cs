@@ -12,7 +12,7 @@ namespace SimplyTyped.Utils
         }
         internal static string EncodeLikePattern(string pattern)
         {
-            return EncodeValue(pattern).Replace("%", "%%");
+            return EncodeValue(pattern).Replace("%", "\\%");
         }
     }
 }

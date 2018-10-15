@@ -7,7 +7,7 @@ namespace SimplyTyped.Serialization
 {
     internal class PrimitiveAttributeSerializer : ISerializer
     {
-        private const string DATETIME_FORMAT = "YYYY-MM-DDThh:mm:ss.sTZD";
+        private const string DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss.sTZD";
         private static Dictionary<Type, Func<string, object>> _deserializationMapping = new Dictionary<Type, Func<string, object>>
         {
             [typeof(Byte)] = (s) => Byte.Parse(s),

@@ -43,16 +43,40 @@ namespace SimplyTyped.Serialization
         public string Serialize(object obj)
         {
             var type = obj.GetType();
+            EnsureEnumFunctionsReady(type);
             if (_serializationMapping.ContainsKey(type))
                 return _serializationMapping[type].Invoke(obj);
             return obj.ToString();
         }
         public object Deserialize(string obj, Type type)
         {
+            EnsureEnumFunctionsReady(type);
             if (_deserializationMapping.ContainsKey(type))
                 return _deserializationMapping[type].Invoke(obj);
             else
                 throw new NotImplementedException($"Type {type.Name} is not a primitive type");
+        }
+
+        private void EnsureEnumFunctionsReady(Type type)
+        {
+            if (!type.IsEnum)
+                return;
+            if(_deserializationMapping.ContainsKey(type) && _serializationMapping.ContainsKey(type))
+                return;
+
+            Type numberType = Enum.GetUnderlyingType(type);
+            var serFunc = new Func<object, string>(o => {
+                var asNumber = Convert.ChangeType(o, numberType);
+                return _serializationMapping[numberType].Invoke(asNumber);
+            });
+            var desFunc = new Func<string, object>(s => 
+            {
+                var numValue = _deserializationMapping[numberType].Invoke(s);
+                return Enum.ToObject(type, numValue);
+            });
+
+            _serializationMapping[type] = serFunc;
+            _deserializationMapping[type] = desFunc;
         }
     }
 }

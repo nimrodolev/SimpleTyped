@@ -38,7 +38,7 @@ namespace SimplyTyped.Serialization
 
         public static bool IsPrimitive(Type type)
         {
-            return _deserializationMapping.ContainsKey(type);
+            return type.IsEnum || _deserializationMapping.ContainsKey(type);
         }
         public string Serialize(object obj)
         {

@@ -57,7 +57,7 @@ namespace SimplyTyped
             {
                 DomainName = _domainName,
                 ItemName = id, //ensured to be a primitive earlier
-                Attributes = Serialize(item).Select(a => new ReplaceableAttribute() { Name = a.Name, Value = a.Value }).ToList(),
+                Attributes = Serialize(item).Select(a => new ReplaceableAttribute() { Name = a.Name, Value = a.Value, Replace = true }).ToList(),
                 Expected = throwIfExists ? new UpdateCondition { Name = idDesc.AttributeName, Exists = false } : null
             });
 
@@ -113,7 +113,7 @@ namespace SimplyTyped
                 return new ReplaceableItem
                 {
                     Name = id,
-                    Attributes = Serialize(i).Select(a => new ReplaceableAttribute { Name = a.Name, Value = a.Value }).ToList()
+                    Attributes = Serialize(i).Select(a => new ReplaceableAttribute { Name = a.Name, Value = a.Value, Replace = true }).ToList()
                 };
             }).ToList();
             var batch = new List<ReplaceableItem>(MAX_BATCH_SIZE);

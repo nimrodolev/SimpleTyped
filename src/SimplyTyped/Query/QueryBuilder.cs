@@ -1,5 +1,4 @@
-﻿using Dynamitey;
-using SimplyTyped.Core.Query;
+﻿using SimplyTyped.Core.Query;
 using SimplyTyped.Serialization;
 using SimplyTyped.Utils;
 using System;
@@ -27,7 +26,7 @@ namespace SimplyTyped.Query
         {
             BinaryExpression bin = null;
             if ((bin = condition.Body as BinaryExpression) == null)
-                throw new NotSupportedException($"Where can not be called with an expression of type {condition.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(Where)} can not be called with an expression of type {condition.Body.GetType().Name}");
 
             var parsed = _parser.ParseBinaryExpression<T>(bin);
             return new Query<T>(parsed);
@@ -36,7 +35,7 @@ namespace SimplyTyped.Query
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
-                throw new NotSupportedException($"In can not be called with an expression of type {member.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(In)} can not be called with an expression of type {member.Body.GetType().Name}");
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
@@ -45,23 +44,47 @@ namespace SimplyTyped.Query
             var valueStrings = values.Select(v => _serializer.Serialize(v)).ToArray();
             return new Query<T>(new InCondition(attrName, valueStrings));
         }
-        public IQuery<T> Like(Expression<Func<T, string>> member, string pattern)
+        public IQuery<T> StartsWith(Expression<Func<T, string>> member, string value)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
-                throw new NotSupportedException($"Like can not be called with an expression of type {member.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(StartsWith)} can not be called with an expression of type {member.Body.GetType().Name}");
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
             var attrName = GetMemberAttributeName(memberName);
 
-            return new Query<T>(new LikeCondition(attrName, pattern));
+            return new Query<T>(new LikeCondition(attrName, $"{QueryEncodingUtility.EncodeLikePattern(value)}%"));
+        }
+        public IQuery<T> EndsWith(Expression<Func<T, string>> member, string value)
+        {
+            MemberExpression memExp = null;
+            if ((memExp = member.Body as MemberExpression) == null)
+                throw new ArgumentException($"{nameof(EndsWith)} can not be called with an expression of type {member.Body.GetType().Name}");
+
+            var memberName = _parser.ExtractMemberName(memExp);
+            EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
+
+            return new Query<T>(new LikeCondition(attrName, $"%{QueryEncodingUtility.EncodeLikePattern(value)}"));
+        }
+        public IQuery<T> Contains(Expression<Func<T, string>> member, string value)
+        {
+            MemberExpression memExp = null;
+            if ((memExp = member.Body as MemberExpression) == null)
+                throw new ArgumentException($"{nameof(Contains)} can not be called with an expression of type {member.Body.GetType().Name}");
+
+            var memberName = _parser.ExtractMemberName(memExp);
+            EnsureMemberQueryable(memberName);
+            var attrName = GetMemberAttributeName(memberName);
+
+            return new Query<T>(new LikeCondition(attrName, $"%{QueryEncodingUtility.EncodeLikePattern(value)}%"));
         }
         public IQuery<T> Between<TMember>(Expression<Func<T, TMember>> member, TMember left, TMember right)
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
-                throw new NotSupportedException($"Between can not be called with an expression of type {member.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(Between)} can not be called with an expression of type {member.Body.GetType().Name}");
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
@@ -73,7 +96,7 @@ namespace SimplyTyped.Query
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
-                throw new NotSupportedException($"IsNull can not be called with an expression of type {member.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(IsNull)} can not be called with an expression of type {member.Body.GetType().Name}");
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);
@@ -124,7 +147,7 @@ namespace SimplyTyped.Query
         {
             MemberExpression memExp = null;
             if ((memExp = member.Body as MemberExpression) == null)
-                throw new NotSupportedException($"Can not be called with an expression of type {member.Body.GetType().Name}");
+                throw new ArgumentException($"{nameof(GetSimpleOperatorCondition)} Can not be called with an expression of type {member.Body.GetType().Name}");
 
             var memberName = _parser.ExtractMemberName(memExp);
             EnsureMemberQueryable(memberName);

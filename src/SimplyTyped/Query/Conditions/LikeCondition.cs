@@ -18,6 +18,6 @@ namespace SimplyTyped.Query
         }
 
         public string Condition => 
-            string.Format(LIKE_TEMPLATE, _memberName, QueryEncodingUtility.EncodeLikePattern(_pattern)); 
+            string.Format(LIKE_TEMPLATE, _memberName, _pattern); 
     }
 }

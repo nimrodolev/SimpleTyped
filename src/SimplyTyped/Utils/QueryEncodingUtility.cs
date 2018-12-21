@@ -8,7 +8,7 @@ namespace SimplyTyped.Utils
     {
         internal static string EncodeValue(string value)
         {
-            return value.Replace("'", "''").Replace("\"", "\"\"");
+            return value.Replace("'", "''");
         }
         internal static string EncodeLikePattern(string pattern)
         {

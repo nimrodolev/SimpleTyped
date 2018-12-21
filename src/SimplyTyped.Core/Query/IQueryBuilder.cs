@@ -94,12 +94,29 @@ namespace SimplyTyped.Core.Query
         IQuery<T> IsNull<TMember>(Expression<Func<T, TMember>> member);
         
         /// <summary>
-        /// Constructs a new 'LIKE' query to filter on string values.
+        /// Constructs a new 'LIKE' query to filter for values that start with the given string.
         /// </summary>
         /// <param name="member">A member expression to define the property the query over</param>
-        /// <param name="pattern">The search pattern</param>
+        /// <param name="value">The search pattern</param>
         /// <returns>A new query</returns>
-        IQuery<T> Like(Expression<Func<T, string>> member, string pattern);
+        IQuery<T> StartsWith(Expression<Func<T, string>> member, string value);
+
+        /// <summary>
+        /// Constructs a new 'LIKE' query to filter for values that end with the given string.
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The search pattern</param>
+        /// <returns>A new query</returns>
+        IQuery<T> EndsWith(Expression<Func<T, string>> member, string value);
+
+
+        /// <summary>
+        /// Constructs a new 'LIKE' query to filter for values that contain a the given string.
+        /// </summary>
+        /// <param name="member">A member expression to define the property the query over</param>
+        /// <param name="value">The search pattern</param>
+        /// <returns>A new query</returns>
+        IQuery<T> Contains(Expression<Func<T, string>> member, string value);
         
         /// <summary>
         /// Constructs a new query by applying a 'NOT' operator on an existing query.

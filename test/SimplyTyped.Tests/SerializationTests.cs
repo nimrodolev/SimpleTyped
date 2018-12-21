@@ -6,32 +6,6 @@ using Xunit;
 
 namespace SimplyTyped.Tests
 {
-    class InlineRangeAttribute : Xunit.Sdk.DataAttribute
-    {
-        private long _start;
-        private long _end;
-
-        public InlineRangeAttribute(long start, long end)
-        {
-            _start = start;
-            _end = end;
-        }
-
-        public InlineRangeAttribute(int start, int end)
-        {
-            _start = start;
-            _end = end;
-        }
-
-        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
-        {
-            for (var i = _start; i <= _end; i++)
-            {
-                yield return new object[] { i };
-            }
-        }
-    }
-
     public class SerializationTests
     {
         [Theory]
@@ -141,5 +115,36 @@ namespace SimplyTyped.Tests
         {
             PrimitiveAttributeSerializer_SerializeNumber_RoundtripSuccessfull(value, typeof(UInt64));
         }
+
+        [Theory]
+        [InlineData(ByteEnum.val2)]
+        [InlineData(SByteEnum.val2)]
+        [InlineData(Int16Enum.val2)]
+        [InlineData(UInt16Enum.val2)]
+        [InlineData(Int32Enum.val2)]
+        [InlineData(UInt32Enum.val2)]
+        [InlineData(Int64Enum.val2)]
+        [InlineData(UInt64Enum.val2)]
+        public void PrimitiveAttributeSerializer_SerializeEnum_RoundtripSuccessfull(Enum value)
+        {
+            // arrange
+            var serializer = new PrimitiveAttributeSerializer();
+            
+            // act
+            var strVal = serializer.Serialize(value);
+            var roundtripped = serializer.Deserialize(strVal, value.GetType());
+
+            // assert
+            Assert.Equal(value, roundtripped);
+        }
+
+        enum ByteEnum : byte { val1, val2};
+        enum SByteEnum : SByte { val1, val2};
+        enum Int16Enum : Int16 { val1, val2};
+        enum UInt16Enum : UInt16 { val1, val2};
+        enum Int32Enum : Int32 { val1, val2};
+        enum UInt32Enum : UInt32 { val1, val2};
+        enum Int64Enum : Int64 { val1, val2};
+        enum UInt64Enum : UInt64 { val1, val2};
     }
 }

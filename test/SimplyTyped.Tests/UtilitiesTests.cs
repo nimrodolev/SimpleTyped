@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SimplyTyped.Utils;
 using Xunit;
 
@@ -34,13 +35,70 @@ namespace SimplyTyped.Tests
 
         #region QueryEncodingUtility
         
-        // [Theory]
-        // [InlineData("He said, \"That's the ticket!")]
-        // public void Check_Value_Encoding_Escape(string value)
-        // {
-        //     var escaped = QueryEncodingUtility.EncodeValue(value);
-        //     Assert.Equal(value,escaped);
-        // }
+        [Theory]
+        [InlineData("")]
+        [InlineData("The lazy fox")]
+        public void Check_QueryEncodingUtility_EncodeValue_Single_Quote_Value_Should_Not_Change(string source)
+        {
+            var shouldBeEscapedCorrectly = QueryEncodingUtility.EncodeValue(source);        
+            // assert
+            Assert.Equal(source, shouldBeEscapedCorrectly);
+        }
+        [Theory]
+        [InlineData("")]
+        [InlineData("The lazy fox")]
+        public void Check_QueryEncodingUtility_EncodeLikePattern_Percent_Sign_Value_Should_Not_Change(string source)
+        {
+            var shouldBeEscapedCorrectly = QueryEncodingUtility.EncodeLikePattern(source);        
+            // assert
+            Assert.Equal(source, shouldBeEscapedCorrectly);
+        }
+
+        [Theory]
+        [InlineData("The 'lazy' fox")]
+        [InlineData("'''''''")]
+        public void Check_QueryEncodingUtility_EncodeValue_Single_Quote_Value_Should_Change(string source)
+        {
+            var shouldBeEscapedCorrectly = QueryEncodingUtility.EncodeValue(source);
+            Check_All_Values_Encoded_Correctly(source, shouldBeEscapedCorrectly, "'", "''");
+        }
+
+        [Theory]
+        [InlineData("The %lazy% fox")]
+        [InlineData("%The lazy fox")]
+        [InlineData("The lazy fox%")]
+        [InlineData("%The lazy fox%")]
+        [InlineData("%%%%")]
+        public void Check_QueryEncodingUtility_EncodeLikePattern_Percent_Sign_Value_Should_Change(string source)
+        {
+            var shouldBeEscapedCorrectly = QueryEncodingUtility.EncodeLikePattern(source);
+            Check_All_Values_Encoded_Correctly(source, shouldBeEscapedCorrectly, "%", "\\%");
+        }
+
+        private void Check_All_Values_Encoded_Correctly(string source, string escaped, string unEncodedValue, string encodedValue)
+        {
+            var added = 0;
+            foreach (var idx in GetAllIndices(source, unEncodedValue))
+            {
+                var p = idx + added;
+                Assert.True(escaped.Length >= p + encodedValue.Length);
+                Assert.Equal(escaped.Substring(p, encodedValue.Length), encodedValue);
+                added += encodedValue.Length - unEncodedValue.Length;
+            }
+        }
+
+        private IEnumerable<int> GetAllIndices(string source, string lookup)
+        {
+            if (string.IsNullOrEmpty(source))
+                yield break;
+            for (int idx = 0; true; idx += lookup.Length)
+            {
+                idx = source.IndexOf(lookup, idx);
+                if (idx == -1)
+                    yield break;
+                yield return idx;
+            }
+        }
         #endregion
     }
 }

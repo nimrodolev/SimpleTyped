@@ -1,3 +1,5 @@
+![SimplyTyped Logo](big_logo.png)
+
 # SimplyTyped #
 
 SimplyTyped is a .NET library that allows simple, strongly typed access to AWS SimpleDB domains. It wraps the `AWSSDK.SimpleDB` library, and exposes the functionality it offers with a simple, strongly-typed, asynchronous API.
@@ -65,7 +67,7 @@ With SimplyTyped, you can simply do -
 
 ```csharp
 public async Task StorePersonAsync(Person p)
-
+{
     IConnection con = new Connection(new AmazonSimpleDBClient());
     IDomain peopleDomain = con.GetDomain<Person>("people");
     await peopleDomain.PutAsync(p)

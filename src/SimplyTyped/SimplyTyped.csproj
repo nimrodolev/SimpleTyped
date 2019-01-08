@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackageId>SimplyTyped</PackageId>
+    <PackageProjectUrl>https://gitlab.com/nimrodolev/SimplyTyped</PackageProjectUrl>
+    <Authors>nimrodolev</Authors>
+    <RepositoryUrl>https://gitlab.com/nimrodolev/SimplyTyped</RepositoryUrl>
+    <PackageLicenseUrl>https://gitlab.com/nimrodolev/SimplyTyped/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://gitlab.com/nimrodolev/SimplyTyped/raw/master/small_logo.png</PackageIconUrl>
+    <PackageTags>simpledb;simple db;aws</PackageTags>
+    <PackageDescription>SimplyTyped is a .NET library that allows simple, strongly typed access to AWS SimpleDB domains. It wraps the `AWSSDK.SimpleDB` library, and exposes the functionality it offers with a simple, strongly-typed, asynchronous API.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
